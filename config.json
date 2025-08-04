@@ -1,0 +1,17 @@
+{
+    "agent": { 
+        "module": "agent.py",
+        "name": "DeepFlame Agent",
+        "welcomeMessage": "Agent for DeepFlame"
+    },
+    "ui": {
+        "title": "DeepFlame Agent"
+    },
+    "server": {
+        "port": 50001,
+        "host": ["localhost","127.0.0.1","*"]
+    },
+    "files":{
+        "watchDirectories": []
+    }
+}
