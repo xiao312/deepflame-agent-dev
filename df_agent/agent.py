@@ -4,9 +4,10 @@ from google.adk.agents import LlmAgent
 from google.adk.models.lite_llm import LiteLlm
 from dotenv import load_dotenv
 
+from df_agent_tools import check_bashrc_loaded, run_allrun_script, read_and_save_openfoam_scalars, plot_openfoam_data
+
 load_dotenv(os.path.join(os.path.dirname(__file__),'.env')) #api,这里的apikey 通过.env注入
 os.environ['DEEPSEEK_API_KEY'] = "sk-d78218515ab846eabceb88b48437fcb6"
-# os.environ["MOONSHOT_API_KEY"] = "sk-Ec3zvaWu0rgeM9sXt6A7jVlvZbdRL8bYIDlkcK44hU9bKuUe"
 
 def load_simulation_types() -> str:
     """
@@ -39,17 +40,21 @@ def load_simulation_types() -> str:
 def create_agent(ak=None, app_key=None, project_id=None):#
     """SDK标准接口"""
     
-    # 定义工具函数
-    
-    def my_tool(param: str):
-        """工具描述"""
-        return "result"
-    
     # 创建Agent, 这里需要返回google adk agent, 相当于过去的root_agent
     return LlmAgent(
-        name="my_agent",
+        name="deepflame_agent_dev_v1",
         model=LiteLlm(model="deepseek/deepseek-chat"),
-        # model=LiteLlm(model="moonshot/moonshot-v1-8k"),
-        instruction="Agent 指令",
-        tools=[my_tool, load_simulation_types] # 注册工具
+        instruction="You are a knowledgeable assistant for DeepFlame simulations. "
+                    "When the user requests to run a simulation, "
+                    "utilize the appropriate tools to set up and execute the simulation. "
+                    "If any errors occur during the process, provide a clear and polite explanation. "
+                    "Upon successful completion, present the results and visualizations in an organized manner.",
+        tools=[
+            load_simulation_types,
+            
+            check_bashrc_loaded,
+            run_allrun_script,
+            read_and_save_openfoam_scalars,
+            plot_openfoam_data,
+        ]
     )
