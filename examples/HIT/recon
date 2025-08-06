@@ -1,0 +1,5 @@
+reconstructPar -fields '(H H2 O O2 H2O OH HO2 H2O2 N2 U T Qdot p rho)' -newTimes
+postProcess -func vorticity
+postProcess -func 'components(vorticity)'
+postProcess -func 'components(U)'
+postProcess -func writeCellCentres
