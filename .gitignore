@@ -2,6 +2,7 @@ log.*
 processor*
 output.txt
 0.*
+.agent_sessions
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

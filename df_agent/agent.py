@@ -1,4 +1,5 @@
 import os
+import sys
 import json
 from google.adk.agents import LlmAgent
 from google.adk.models.lite_llm import LiteLlm
@@ -6,9 +7,11 @@ from dotenv import load_dotenv
 
 from df_agent_tools import check_bashrc_loaded, run_allrun_script, read_and_save_openfoam_scalars, plot_openfoam_data
 from df_case_tools import copy_from_standard
+from xdebench_interface.xde_tools import xde_inference_tool
 
 load_dotenv(os.path.join(os.path.dirname(__file__),'.env')) #api,这里的apikey 通过.env注入
 os.environ['DEEPSEEK_API_KEY'] = "sk-d78218515ab846eabceb88b48437fcb6"
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 def load_simulation_types() -> str:
     """
@@ -59,5 +62,7 @@ def create_agent(ak=None, app_key=None, project_id=None):#
             plot_openfoam_data,
 
             copy_from_standard,
+            
+            xde_inference_tool,
         ]
     )
