@@ -4,8 +4,6 @@ import shutil
 import json
 import matplotlib.pyplot as plt
 
-from df_agent_utils import read_openfoam_scalar
-
 def add_region(
     target_case_path: str,  
     fire_num: int,        # 总点火区数
@@ -229,7 +227,7 @@ def copy_from_standard(
         }
     
     for i in range(len(region_type)):
-        add_region(target_case_dir, len(region_type), i+1, region_type[i], '/home/xu/test-6/deepflame-agent-dev/df_agent/files/HIT_Fields.json')
+        add_region(target_case_dir, len(region_type), i+1, region_type[i], '/home/xk/Software/6_bohr_agent/deepflame-agent-dev/df_agent/agent/files/HIT_Fields.json')
         conduct_add_region(target_case_dir, len(region_type), i+1, region_type[i])
 
     

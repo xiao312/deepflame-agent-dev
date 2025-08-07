@@ -1,9 +1,11 @@
 import os
+import sys
 import subprocess
 
 import matplotlib.pyplot as plt
 
-from df_agent_utils import read_openfoam_scalar
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from deepflame_interface.df_agent_utils import read_openfoam_scalar
 
 def check_bashrc_loaded() -> dict:
     """Checks if the DeepFlame and OpenFOAM bashrc files are loaded in the current environment.
