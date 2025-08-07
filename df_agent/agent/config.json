@@ -12,6 +12,7 @@
         "host": ["localhost","127.0.0.1","*"]
     },
     "files":{
-        "watchDirectories": ["files"]
-    }
+        "watchDirectories": ["files", "output"]
+    },
+    "SUPPORTED_CASE_TYPES": ["1D_free_flame", "2D_HIT"]
 }
