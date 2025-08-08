@@ -29,8 +29,10 @@ os.environ['DEEPSEEK_API_KEY'] = "sk-d78218515ab846eabceb88b48437fcb6"
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 
-async def send_image_tool(file_path: str, port: int = 50002) -> str:
+async def send_image_tool(file_path: str) -> str:
     """Prepare the Markdown link for display using a local web server image path."""
+    port: int = 50002
+    
     if not os.path.isfile(file_path):
         return json.dumps({"error": "File not found."})
 

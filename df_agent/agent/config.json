@@ -12,7 +12,11 @@
         "host": ["localhost","127.0.0.1","*"]
     },
     "files":{
-        "watchDirectories": ["files", "output"]
+        "watchDirectories": ["output"]
     },
-    "SUPPORTED_CASE_TYPES": ["1D_free_flame", "2D_HIT"]
+    "SUPPORTED_CASE_TYPES": ["1D_free_flame", "2D_HIT"],
+    "xdebench": {
+        "src": "/home/xk/Software/6_bohr_agent/XDEBench/XDEBench",
+        "data": "/mnt/d/u_deepflame_agent/hit-best"
+    }
 }

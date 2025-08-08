@@ -11,16 +11,17 @@ def initialize_task_manager(case_type: str, case_num: int) -> dict:
     """Initializes the task manager for specified run cases based on user input.
 
     This tool should be used when the user provides a description that includes 
-    specific case types such as "HIT", "二维HIT", "hit", or "2D_HIT". The function
-    will automatically normalize the case type to "2D_HIT" if any of these keywords 
-    are detected in the input. If the input case type does not match any supported 
-    types, an error will be returned.
+    specific case types. If the input case type does not match any supported types, 
+    an error will be returned.
+    
+    If the input contains any of the following keywords: 
+    "HIT", "二维HIT", "hit算例", or "2D_HIT", 
+    the function will automatically normalize the case type to "2D_HIT".
 
     Args:
         case_type: A string indicating the type of case to be initialized. 
-                   Valid values include "2D_HIT", "HIT", "二维HIT", or variations 
-                   like "hit" and "2d_HIT". If any of these are provided, 
-                   they will be normalized to "2D_HIT".
+                   Normalization rules: input containing "HIT", "二维HIT", "hit算例", 
+                   or "2D_HIT" -> case_type will be set to "2D_HIT".
         case_num: An integer representing the number of instances to create 
                   for the specified case type. This should be a positive integer.
 
@@ -88,11 +89,13 @@ async def initialize_tasks() -> dict:
 
     This tool should be called immediately after initialize_task_manager
     has succeeded. It creates necessary output directories and copies 
-    template directories for each registered run case.
+    template directories for each registered run case. 
+
+    **Important:** Do not run any more tools after this one succeeds.
 
     Returns:
         A dictionary indicating the outcome of the operation:
-            - If successful: {'status': 'success', 'message': 'Tasks initialized successfully.'}
+            - If successful: {'status': 'success', 'message': 'Tasks initialized successfully.', 'output': {}} 
             - If task manager does not exist: {'status': 'error', 'error_message': 'Task manager does not exist.'}
     """
     try:
@@ -126,17 +129,33 @@ async def initialize_tasks() -> dict:
         xde_runs_dir = Path("output/xde_runs")
         df_runs_dir.mkdir(parents=True, exist_ok=True)
         xde_runs_dir.mkdir(parents=True, exist_ok=True)
+        
+        template_dir = Path(df_agent_root).parent.parent / 'case_templates'
 
         # Copy template directories for each run case
-        for run_case in task_manager["run_cases"]:
+        for case_name, run_case in task_manager["run_cases"].items():
             case_type = run_case["case_type"]
-            case_name = run_case["name"]
-
-            # Assuming you have a template directory structure
-            template_dir = Path(f"templates/{case_type}")  # Adjust the path as necessary
+            if case_type not in SUPPORTED_CASE_TYPES:
+                return {"status": "error", "error_message": f"Unsupported case type: {case_type}"}
+            
+            case_template_dir = template_dir / case_type
             target_dir = df_runs_dir / case_name
-            shutil.copytree(template_dir, target_dir)
+            shutil.copytree(case_template_dir, target_dir)
 
-        return {"status": "success", "message": "Tasks initialized successfully."}
+        # Gather output files and directories
+        output_contents = {}
+        output_path = Path(df_agent_root) / 'output'
+
+        for item in output_path.iterdir():
+            if item.is_dir():
+                output_contents[item.name] = [subitem.name for subitem in item.iterdir()]
+            else:
+                output_contents[item.name] = []  # or you can choose to include files with their names
+
+        return {
+            "status": "success",
+            "message": "Tasks initialized successfully.",
+            "output": output_contents
+        }
     except Exception as e:
         return {"status": "error", "error_message": str(e)}
