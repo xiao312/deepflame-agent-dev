@@ -24,6 +24,20 @@ from dfa_tools import (
 )
 from xdebench_interface.xde_tools import xde_inference_tool
 
+from case_generation_tools import (
+    setup_case_directory,
+    check_case_completeness,
+    visualize_blockmesh,
+    edit_controlDict,
+    edit_blockMeshDict,
+    edit_fvSchemes,
+    edit_fvSolution,
+    edit_physical_properties,
+    query_chemkinetics,
+    place_constant_file,
+    create_initial_field_from_template,
+)
+
 load_dotenv(os.path.join(os.path.dirname(__file__),'.env')) #api,这里的apikey 通过.env注入
 os.environ['DEEPSEEK_API_KEY'] = "sk-d78218515ab846eabceb88b48437fcb6"
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
@@ -128,5 +142,16 @@ def create_agent(ak=None, app_key=None, project_id=None):
             initialize_tasks,
             
             xde_inference_tool,
+            setup_case_directory,
+            check_case_completeness,
+            visualize_blockmesh,
+            edit_controlDict,
+            edit_blockMeshDict,
+            edit_fvSchemes,
+            edit_fvSolution,
+            edit_physical_properties,
+            query_chemkinetics,
+            place_constant_file,
+            create_initial_field_from_template,
         ]
     )
