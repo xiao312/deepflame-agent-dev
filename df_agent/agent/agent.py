@@ -22,7 +22,11 @@ from dfa_tools import (
     initialize_task_manager,
     initialize_tasks,
 )
-from xdebench_interface.xde_tools import xde_inference_tool
+from xdebench_interface.xde_tools import (
+    xde_inference_tool, 
+    xde_visualize_tool,
+    query_available_models,
+)
 
 load_dotenv(os.path.join(os.path.dirname(__file__),'.env')) #api,这里的apikey 通过.env注入
 os.environ['DEEPSEEK_API_KEY'] = "sk-d78218515ab846eabceb88b48437fcb6"
@@ -32,7 +36,6 @@ sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 async def send_image_tool(file_path: str) -> str:
     """Prepare the Markdown link for display using a local web server image path."""
     port: int = 50002
-    
     if not os.path.isfile(file_path):
         return json.dumps({"error": "File not found."})
 
@@ -73,35 +76,6 @@ async def send_image_from_url(image_url: str) -> str:
     except Exception as e:
         return json.dumps({"error": str(e)})
 
-
-# def load_simulation_types() -> str:
-#     """
-#     Load the types of simulations the agent is currently capable of.
-
-#     Returns:
-#         JSON string with available simulation types.
-#     """
-
-#     # Define the available simulation types
-#     simulation_types = {
-#         "type_1": {
-#             "name": "One-Dimensional Planar Flame",
-#             "description": "The case simulates the steady-state 1D freely-propagating flame."
-#         },
-#         "type_2": {
-#             "name": "Two-Dimensional Triple Flame",
-#             "description": "This case simulates the evolution of a 2D non-premixed planar jet flame to validate the capability of our solver for multi-dimensional applications."
-#         },
-#         "type_3": {
-#             "name": "Two-Dimensional Reactive Taylor-Green Vortex",
-#             "description": "2D reactive Taylor-Green Vortex (TGV) which is simplified from the 3D reactive TGV below is simulated here."
-#         },
-#         # Add more simulation types as needed
-#     }
-    
-#     # Convert the simulation types to a JSON string
-#     return json.dumps(simulation_types, indent=2)
-
 def create_agent(ak=None, app_key=None, project_id=None):
     """SDK标准接口"""
     
@@ -115,7 +89,6 @@ def create_agent(ak=None, app_key=None, project_id=None):
                     "If any errors occur during the process, provide a clear and polite explanation. "
                     "Upon successful completion, present the results and visualizations in an organized manner.",
         tools=[
-            # load_simulation_types,
             send_image_tool,
             send_image_from_url,
             
@@ -130,5 +103,7 @@ def create_agent(ak=None, app_key=None, project_id=None):
             initialize_tasks,
             
             xde_inference_tool,
+            xde_visualize_tool,
+            query_available_models,
         ]
     )
