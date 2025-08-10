@@ -93,6 +93,9 @@ async def initialize_tasks() -> dict:
 
     **Important:** Do not run any more tools after this one succeeds.
 
+    After execution, the agent should ask:
+        “每个算例分别需要什么初始场的设置？”
+
     Returns:
         A dictionary indicating the outcome of the operation:
             - If successful: {'status': 'success', 'message': 'Tasks initialized successfully.', 'output': {}} 

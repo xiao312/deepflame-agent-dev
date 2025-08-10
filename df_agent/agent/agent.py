@@ -21,6 +21,7 @@ from dfa_tools import (
     copy_from_standard,
     initialize_task_manager,
     initialize_tasks,
+    add_regions_interactive,
 )
 from xdebench_interface.xde_tools import (
     xde_inference_tool, 
@@ -101,6 +102,8 @@ def create_agent(ak=None, app_key=None, project_id=None):
             
             initialize_task_manager,
             initialize_tasks,
+            
+            add_regions_interactive,
             
             xde_inference_tool,
             xde_visualize_tool,
