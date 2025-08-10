@@ -186,17 +186,17 @@ def query_available_models() -> dict:
                 {
                     'name': 'FFNO',
                     'description': 'Factorized Fourier Neural Operators, which effectively captures long-range dependencies while reducing parameter count and computational cost.',
-                    'reference': 'Factorized Fourier Neural Operators.'
+                    'reference': 'Tran A, Mathews A, Xie L, Ong CS. Factorized fourier neural operators. arXiv preprint arXiv:2111.13802. 2021 Nov 27.'
                 },
                 {
                     'name': 'FactFormer',
                     'description': 'Scalable Transformer for PDE Surrogate Modeling, optimized for spatial-temporal encoding and sparse attention mechanisms.',
-                    'reference': 'Scalable Transformer for PDE Surrogate Modeling.'
+                    'reference': 'Li Z, Shu D, Barati Farimani A. Scalable transformer for pde surrogate modeling. Advances in Neural Information Processing Systems. 2023 Dec 15;36:28010-39.'
                 },
                 {
                     'name': 'CNext',
                     'description': 'A ConvNet for the 2020s, enhancing the classic U-Net with modern convolution designs for improved stability and generalization.',
-                    'reference': 'A ConvNet for the 2020s.'
+                    'reference': 'Liu Z, Mao H, Wu CY, Feichtenhofer C, Darrell T, Xie S. A convnet for the 2020s. InProceedings of the IEEE/CVF conference on computer vision and pattern recognition 2022 (pp. 11976-11986).'
                 }
             ]
         }
@@ -211,21 +211,21 @@ def query_available_models() -> dict:
                 'description': (
                     'Factorized Fourier Neural Operators, which effectively captures long-range dependencies while reducing parameter count and computational cost.'
                 ),
-                'reference': 'Factorized Fourier Neural Operators.'
+                'reference': 'Tran A, Mathews A, Xie L, Ong CS. Factorized fourier neural operators. arXiv preprint arXiv:2111.13802. 2021 Nov 27.'
             },
             {
                 'name': 'FactFormer',
                 'description': (
                     'Scalable Transformer for PDE Surrogate Modeling, optimized for spatial-temporal encoding and sparse attention mechanisms.'
                 ),
-                'reference': 'Scalable Transformer for PDE Surrogate Modeling.'
+                'reference': 'Li Z, Shu D, Barati Farimani A. Scalable transformer for pde surrogate modeling. Advances in Neural Information Processing Systems. 2023 Dec 15;36:28010-39.'
             },
             {
                 'name': 'CNext',
                 'description': (
-                    'A ConvNet for the 2020s, enhancing the classic U-Net with modern convolution designs for improved stability and generalization.'
+                    'A ConvNet enhancing the classic U-Net with modern convolution designs for improved stability and generalization.'
                 ),
-                'reference': 'A ConvNet for the 2020s.'
+                'reference': 'Liu Z, Mao H, Wu CY, Feichtenhofer C, Darrell T, Xie S. A convnet for the 2020s. InProceedings of the IEEE/CVF conference on computer vision and pattern recognition 2022 (pp. 11976-11986).'
             }
         ]
         
