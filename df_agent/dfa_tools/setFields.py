@@ -3,6 +3,7 @@ import sys
 import json
 import shutil
 from pathlib import Path
+from typing import List, Tuple, Dict
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from deepflame_interface.configuration_handler import CaseConfiguration
@@ -35,11 +36,11 @@ def add_region_config(case_name: str, region: dict) -> dict:
                 }
     """
     try:
-        # df_agent_root = os.getenv('DF_AGENT_ROOT')
-        # if df_agent_root is None:
-        #     raise EnvironmentError("DF_AGENT_ROOT environment variable is not set.")
+        df_agent_root = os.getenv('DF_AGENT_ROOT')
+        if df_agent_root is None:
+            raise EnvironmentError("DF_AGENT_ROOT environment variable is not set.")
 
-        df_agent_root = '/home/xu/test-6/deepflame-agent-dev/df_agent/agent'
+        # df_agent_root = '/home/xu/test-6/deepflame-agent-dev/df_agent/agent'
 
         task_manager_path = Path(df_agent_root) / 'output' / 'task_manager.json'
         if not task_manager_path.is_file():
@@ -50,6 +51,7 @@ def add_region_config(case_name: str, region: dict) -> dict:
             task_manager = json.load(f)
 
         run_cases = task_manager.get("run_cases", {})
+        
         if case_name not in run_cases:
             return {
                 "status": "error",
@@ -88,8 +90,8 @@ def add_region_config(case_name: str, region: dict) -> dict:
 def conduct_add_region(
     target_case_path: str,  
     region: str,        # 当前区域类型
-    p1: str,
-    p2: str,
+    p1: list,
+    p2: list,
     radius: float
 ) -> dict:
     
@@ -177,9 +179,14 @@ def conduct_add_region(
     }
 
 
-def add_target_case_region(target_case_name: str) -> dict:
+def add_target_case_region(target_case: str) -> dict:
+    df_agent_root = os.getenv('DF_AGENT_ROOT')
+    if df_agent_root is None:
+        raise EnvironmentError("DF_AGENT_ROOT environment variable is not set.")
+    
     # 1. 读取主配置文件 config.json
-    cfg_path = Path("/home/xu/test-6/deepflame-agent-dev/df_agent/agent/output/task_manager.json")
+    cfg_path = Path(df_agent_root) / 'output' / 'task_manager.json' 
+    
     if not cfg_path.is_file():
         print(f"Error: {cfg_path} not found.")
         exit(1)
@@ -188,25 +195,32 @@ def add_target_case_region(target_case_name: str) -> dict:
         cfg = json.load(f)
 
     run_cases = cfg.get("run_cases", {})
-    print(run_cases)
+    # print(run_cases)
+    
+    target_case_name = Path(target_case).name
     if target_case_name not in run_cases:
         print(f"Error: run case '{target_case_name}' not in config.json")
         exit(1)
 
     # 3. 从配置中读取 regions 列表
     regions = run_cases[target_case_name]["case_config"]["setFieldsDict"]["regions"]
+    print(f'{regions=}')
 
     # 4. 定位目标算例路径下的 system/setFields 文件
-    df_agent_root = '/home/xu/test-6/deepflame-agent-dev/df_agent/agent'
+    
+    
     task_path = Path(df_agent_root) / 'output' / 'df_runs' 
 
     target_case_path = os.path.join(task_path, target_case_name)
 
     # 5. 对每个 region 调用 conduct_add_region，收集新 block
     for idx, reg in enumerate(regions, start=1):
+        
         region_type = reg.get("type")
         p1 = reg.get("p1")
+        print(f'{p1=}')
         p2 = reg.get("p2")
+        print(f'{p2=}')
         radius = reg.get("radius")
         res = conduct_add_region(target_case_path, region_type, p1, p2, radius)
         if res.get("status") != "success":
@@ -220,26 +234,26 @@ def add_target_case_region(target_case_name: str) -> dict:
 
 
 
-def add_regions_interactive(setFields_type: list, case_name: str) -> dict:
+def establish_ignition_zones(case_name: str, shape: str, number: int) -> dict:
     """Interactively adds normalized region types to an existing list.
 
-    This tool prompts the user to input a case name and a region description. Based on keywords about cases
-    in the input, it normalizes one of: "2D_HIT_1" or "2D_HIT_2" or "2D_HIT_3". 
-    Based on keywords about shapes in the input, it appends one of: "circle", "square", or "ring" for any times.
-    If the normalized region already exists in setFields_type, an error is returned.
-    Unsupported descriptions also yield an error.
+    This tool adds a specified number of regions of a normalized shape to an existing list of regions. 
+    It normalizes the shape input based on specific keywords and checks for duplicates 
+    in the existing regions. If the shape is unsupported or the input is invalid, an error is returned.
 
     Normalization rules:
-        - Input containing "圆"            -> normalized to "circle"
-        - Input containing "方"            -> normalized to "square"
-        - Input containing "环"            -> normalized to "ring"
+        - Input containing "环" or "环形"  -> normalized to "ring"
+        - Input containing "圆" or "圆形"  -> normalized to "circle"
+        - Input containing "方" or "方形"  -> normalized to "square"
 
     Attention:  
-        the setFields_type shouldn't be [] or NULL
+        The shape input should only be one of "ring", "circle", or "square".
 
     Args:
-        setFields_type: A list of strings representing the regions already added.
-        for example and default: setFields_type = ['circle','square','ring']
+        case_name:  The name of the run case (e.g., "2D_HIT_1").
+        shape:      A string representing the shape of the region. It should **ONLY**
+                    be one of "circle", "square", "ring".
+        number:     An integer representing the number of regions to add.
 
     Returns:
         dict: Outcome of the operation:
@@ -279,7 +293,7 @@ def add_regions_interactive(setFields_type: list, case_name: str) -> dict:
           'error_message': 'Unsupported region type: "三角形".'
         }
     """
-
+    setFields_type = [shape] * number if shape else []
     if not setFields_type:
         return {
             'status': 'error',
@@ -289,12 +303,16 @@ def add_regions_interactive(setFields_type: list, case_name: str) -> dict:
     print(setFields_type)
 
     try:
-        df_agent_root = '/home/xu/test-6/deepflame-agent-dev/df_agent/agent'
+        df_agent_root = os.getenv('DF_AGENT_ROOT')
+        if df_agent_root is None:
+            raise EnvironmentError("DF_AGENT_ROOT environment variable is not set.")
+        
         task_path = Path(df_agent_root) / 'output' / 'df_runs'
         if not task_path.is_dir():
             raise FileNotFoundError(f"Directory not found: {task_path}")
 
         fi = case_name
+        print(f"Processing case: {fi}")
 
         for idx in range(len(setFields_type)):
             region_type = setFields_type[idx]
@@ -367,9 +385,13 @@ def add_regions_interactive(setFields_type: list, case_name: str) -> dict:
 
             # 4. Add to task_manager.json
             add_res = add_region_config(fi, test_region)
+            print(json.dumps(add_res, indent=2, ensure_ascii=False))
 
-
-        add_target_case_region(fi)
+        print("break1")
+        get = add_target_case_region(fi)
+        print("add_target_case_region done")
+        print(json.dumps(get, indent=2, ensure_ascii=False))
+        print("break2")
 
         return {
             "status": "success",
@@ -390,8 +412,59 @@ def add_regions_interactive(setFields_type: list, case_name: str) -> dict:
 
 
 if __name__ == "__main__":
+    os.environ['DF_AGENT_ROOT'] = '/home/xk/Software/6_bohr_agent/deepflame-agent-dev/df_agent/agent'
+    
+    test_case = '/home/xk/Software/6_bohr_agent/deepflame-agent-dev/df_agent/agent/output/df_runs/2D_HIT_1'
+    test_case_name = Path(test_case).name
+    
+    # get = add_region_config(
+    #     test_case_name,
+    #     {
+    #         "type": "circle",
+    #         "p1": [0.016755160, 0.025132741, 0],
+    #         "p2": [0.016755160, 0.025132741, 0.050265482],
+    #         "radius": 0.00102604,
+    #     }
+    # )
+    # print(json.dumps(get, indent=2, ensure_ascii=False))
+    
+    # get = conduct_add_region(
+    #     target_case_path=test_case,  
+    #     region='circle',        # 当前区域类型
+    #     p1=[0.025, 0.025, 0],
+    #     p2=[0.025, 0.025, 0.050265482],
+    #     radius=0.01
+    # )
+    # print(json.dumps(get, indent=2, ensure_ascii=False))
+    
+    # get = conduct_add_region(
+    #     target_case_path=test_case,  
+    #     region='square',        # 当前区域类型
+    #     p1=[0.025, 0.025, 0],
+    #     p2=[0.025, 0.025, 0.050265482],
+    #     radius=0.01
+    # )
+    # print(json.dumps(get, indent=2, ensure_ascii=False))
+    
+    # get = conduct_add_region(
+    #     target_case_path=test_case,  
+    #     region='ring',        # 当前区域类型
+    #     p1=[0.025, 0.025, 0],
+    #     p2=[0.025, 0.025, 0.050265482],
+    #     radius=0.01
+    # )
+    # print(json.dumps(get, indent=2, ensure_ascii=False))
+    
+    # get = add_target_case_region(test_case_name)
+    # print(json.dumps(get, indent=2, ensure_ascii=False))
+    
     setFields_type = ['circle','square','ring']
-    add_regions_interactive(setFields_type)
+    dict = establish_ignition_zones(
+        case_name=test_case_name,
+        shape='circle',
+        number=2
+    )
+    print(json.dumps(dict, ensure_ascii=False, indent=2))
 
 
 

@@ -9,7 +9,8 @@ from .task_initialization import (
     initialize_task_manager,
     initialize_tasks,
 )
-from .setFields import add_regions_interactive
+from .task_runner import start_df_runs, visualize_df_runs
+from .setFields import establish_ignition_zones
 
 __all__ = [
     'check_bashrc_loaded',
@@ -19,4 +20,7 @@ __all__ = [
     'copy_from_standard',
     'initialize_task_manager',
     'initialize_tasks',
+    'establish_ignition_zones',
+    'start_df_runs',
+    'visualize_df_runs',
 ]

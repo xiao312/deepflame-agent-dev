@@ -87,19 +87,30 @@ def initialize_task_manager(case_type: str, case_num: int) -> dict:
 async def initialize_tasks() -> dict:
     """Initializes tasks based on the information in output/task_manager.json.
 
-    This tool should be called immediately after initialize_task_manager
+    This tool should be called immediately after `initialize_task_manager`
     has succeeded. It creates necessary output directories and copies 
     template directories for each registered run case. 
 
     **Important:** Do not run any more tools after this one succeeds.
 
-    After execution, the agent should ask:
-        “每个算例分别需要什么初始场的设置？”
+    After execution, the agent should ask the user for further information 
+    about the settings of ignition zones for each case. The user should 
+    provide the number of ignition zones and their shapes. This information 
+    is sufficient for the next step; no additional details should be requested.
 
     Returns:
         A dictionary indicating the outcome of the operation:
-            - If successful: {'status': 'success', 'message': 'Tasks initialized successfully.', 'output': {}} 
-            - If task manager does not exist: {'status': 'error', 'error_message': 'Task manager does not exist.'}
+            - If successful: 
+                {
+                    'status': 'success', 
+                    'message': 'Tasks initialized successfully.', 
+                    'output': {}
+                }
+            - If task manager does not exist: 
+                {
+                    'status': 'error', 
+                    'error_message': 'Task manager does not exist.'
+                }
     """
     try:
         df_agent_root = os.getenv('DF_AGENT_ROOT')

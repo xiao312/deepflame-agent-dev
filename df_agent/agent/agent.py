@@ -18,16 +18,33 @@ from dfa_tools import (
     run_allrun_script,
     read_and_save_openfoam_scalars,
     plot_openfoam_data,
-    copy_from_standard,
+    # copy_from_standard,
     initialize_task_manager,
     initialize_tasks,
-    add_regions_interactive,
+    establish_ignition_zones,
+    start_df_runs,
+    visualize_df_runs,
+    # setFields_tool,
 )
 from xdebench_interface.xde_tools import (
     xde_inference_tool, 
     xde_visualize_tool,
     query_available_models,
 )
+from case_generation_tools import (
+    setup_case_directory,
+    check_case_completeness,
+    visualize_blockmesh,
+    edit_controlDict,
+    edit_blockMeshDict,
+    edit_fvSchemes,
+    edit_fvSolution,
+    edit_physical_properties,
+    query_chemkinetics,
+    place_constant_file,
+    create_initial_field_from_template,
+)
+
 
 load_dotenv(os.path.join(os.path.dirname(__file__),'.env')) #api,这里的apikey 通过.env注入
 os.environ['DEEPSEEK_API_KEY'] = "sk-d78218515ab846eabceb88b48437fcb6"
@@ -90,23 +107,37 @@ def create_agent(ak=None, app_key=None, project_id=None):
                     "If any errors occur during the process, provide a clear and polite explanation. "
                     "Upon successful completion, present the results and visualizations in an organized manner.",
         tools=[
-            send_image_tool,
-            send_image_from_url,
+            # send_image_tool,
+            # send_image_from_url,
             
             check_bashrc_loaded,
             run_allrun_script,
             read_and_save_openfoam_scalars,
             plot_openfoam_data,
 
-            copy_from_standard,
+            # copy_from_standard,
             
             initialize_task_manager,
             initialize_tasks,
             
-            add_regions_interactive,
+            establish_ignition_zones,
+            start_df_runs,
+            visualize_df_runs,
             
             xde_inference_tool,
             xde_visualize_tool,
             query_available_models,
+            
+            setup_case_directory,
+            check_case_completeness,
+            visualize_blockmesh,
+            edit_controlDict,
+            edit_blockMeshDict,
+            edit_fvSchemes,
+            edit_fvSolution,
+            edit_physical_properties,
+            query_chemkinetics,
+            place_constant_file,
+            create_initial_field_from_template,
         ]
     )
