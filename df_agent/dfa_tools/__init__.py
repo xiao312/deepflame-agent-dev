@@ -9,6 +9,7 @@ from .task_initialization import (
     initialize_task_manager,
     initialize_tasks,
 )
+from .setFields import add_regions_interactive
 
 __all__ = [
     'check_bashrc_loaded',
